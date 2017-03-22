@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WEbSockets Example</title>
+  </head>
+  <body>
+    <h2>Web Sockets Example</h2>
+    <p id="output"></p>
+    <!-- Socket.io Client Library -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="application/javascript">
+      // Our Client side code will go here
+      var socket = io.connect("http://localhost:8081")
+      var output = document.getElementById('output')
+      function logScreen(text){
+        var date = new Date().toISOString()
+        line = date + " " + text + "<br/>"
+        output.innerHTML = line + output.innerHTML
+      }
+      socket.on('connection', function (){
+        logScreen('Conenction!')
+        socket.send('Hello')
+      })
+      socket.on('message', logScreen)
+    </script>
+  </body>
+</html>
