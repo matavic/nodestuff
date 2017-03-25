@@ -15,8 +15,12 @@ var io = new IOServer(server)
 
 io.on('connection', function (socket){
   //console.log('New Connection');
+  function onTimeout(){
+    socket.send('Update')
+  }
   socket.on('message', function(message){
     socket.send(message)
   })
+  setInterval(onTimeout, 1000)
 })
 server.listen(8081)

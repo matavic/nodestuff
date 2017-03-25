@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Ajax Example</title>
+    <script type="application/javascript">
+    // Our Client side code will go here
+    var ajaxRequest, target;  // The variable that makes Ajax possible!
+    function ajaxFunction(){
+       try{
+          // Opera 8.0+, Firefox, Safari
+          ajaxRequest = new XMLHttpRequest();
+       }catch (e){
+         // Internet Explorer Browsers
+          try{
+             ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+          }catch (e) {
+
+             try{
+                ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+             }catch (e){
+
+                // Something went wrong
+                alert("Your browser broke!");
+                return false;
+             }
+          }
+       }
+    }
+    function processRequest() {
+       if (ajaxRequest.readyState == 4) {
+          if (ajaxRequest.status == 200) {
+             var message = ajaxRequest.responseText
+             setMessageUsingDOM(message)
+          }
+      }
+    }
+    function setMessageUsingDOM(message) {
+       var userMessageElement = document.getElementById("userIdMessage");
+       var messageText;
+
+       if (message == "false") {
+          userMessageElement.style.color = "red";
+          messageText = "Invalid User Id";
+       }
+       else
+       {
+          userMessageElement.style.color = "green";
+          messageText = "Valid User Id";
+       }
+
+       var messageBody = document.createTextNode(messageText);
+
+       // if the messageBody element has been created simple
+       // replace it otherwise append the new element
+       if (userMessageElement.childNodes[0]) {
+          userMessageElement.replaceChild(messageBody, userMessageElement.childNodes[0]);
+       }
+       else
+       {
+          userMessageElement.appendChild(messageBody);
+       }
+    }
+    function validateUserId() {
+       ajaxFunction();
+
+       // Here processRequest() is the callback function.
+       ajaxRequest.onreadystatechange = processRequest;
+
+       if (!target) target = document.getElementById("userid");
+       var url = "validate?id=" + escape(target.value);
+
+       ajaxRequest.open("GET", url, true);
+       ajaxRequest.send(null);
+    }
+  </script>
+  </head>
+  <body>
+    <h2>Ajax Example</h2>
+    <input type="text" size="20" id="userid" name="id" onkeyup="validateUserId();">
+    </br>
+    <div id="userIdMessage"><div>
+  </body>
+</html>
