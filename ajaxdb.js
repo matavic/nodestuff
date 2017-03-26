@@ -4,7 +4,7 @@ const fs = require('fs')
 const MongoClient = require('mongodb').MongoClient
 
 var port = 8081
-var url = 'mongodb://localhost:27017/ajaxdb'
+var urldb = 'mongodb://localhost:27017/ajaxdb'
 
 var server = http.createServer(function(req, res){
   if (req.method !== 'GET') {
@@ -22,14 +22,14 @@ var server = http.createServer(function(req, res){
   }
   if (endpoint == '/validate'){
     if (url.query){
-      MongoClient.connect(url, function(err, db) {
+      MongoClient.connect(urldb, function(err, db) {
           if(err){
             console.log('Something bad happened with the connection \n')
             return (err)
           }
           console.log("Connected correctly to server");
-          var collection = db.collection('users')
-          collection.find({$and:[{"age":url.query.age},{"wpm": url.query.wpm},{"sex": url.query.sex}]}).toArray(function(err, doc){
+          var coleccion = db.collection('users')
+          coleccion.find({$and:[{age:Number(url.query.age)},{wpm: Number(url.query.wpm)},{sex: url.query.sex}]}).toArray(function(err, doc){
             if(err){
               console.log('Error when querying the results');
               db.close()
@@ -46,22 +46,43 @@ var server = http.createServer(function(req, res){
               displayResult += "</table>"
               res.writeHead(200,{'Content-Type': 'text/html'})
               res.end(displayResult)
-            }else{
-              res.writeHead(200,{'Content-Type': 'text/plain'})
-              res.end("There are no coincidences!")
-            }
+           }else{
+             res.writeHead(200,{'Content-Type': 'text/plain'})
+             res.end("There are no coincidences!")
+           }
           })
           db.close()
       })
-      if (url.query.id == 'aitana' || url.query.id == 'vicente' || url.query.id == 'ariadna'){
-        res.writeHead(200,{'Content-Type': 'text/plain'})
-        res.end("true")
-      }else{
-        res.writeHead(200,{'Content-Type': 'text/plain'})
-        res.end("false")
-      }
     }
   }
 })
 
 server.listen(port)
+
+
+/*
+coleccion.findOne({$and:[{age:Number(url.query.age)},{wpm: Number(url.query.wpm)},{sex: url.query.sex}]},function(err, doc){
+  if(err){
+    console.log('Error when querying the results');
+    db.close()
+    return (err)
+  }
+  //if (doc.length > 0){
+    // var displayResult
+    // displayResult = "<table><tr><th>Name</th><th>Age</th><th>Sex</th><th>WPM</th></tr>"
+    // displayResult += "<tr>"
+    // displayResult += "<td>" + doc.name + "</td>"
+    // displayResult += "<td>" + doc.age + "</td>"
+    // displayResult += "<td>" + doc.sex + "</td>"
+    // displayResult += "<td>" + doc.wpm + "</td>"
+    // displayResult += "</table>"
+    // res.writeHead(200,{'Content-Type': 'text/html'})
+    // res.end(displayResult)
+//  }else{
+//    res.writeHead(200,{'Content-Type': 'text/plain'})
+//    res.end("There are no coincidences!")
+//    }
+})
+db.close()
+})
+*/
